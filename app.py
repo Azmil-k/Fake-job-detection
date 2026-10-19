@@ -1,4 +1,4 @@
-
+import re
 import streamlit as st
 import pandas as pd
 import joblib
@@ -16,6 +16,13 @@ st.write(
     "Enter a job posting below to check whether the "
     "machine learning model considers it potentially fraudulent."
 )
+
+def clean_text(text):
+    text = str(text)
+    text = text.lower()
+    text = re.sub(r'[^a-zA-Z\s]', ' ', text)
+    text = re.sub(r'\s+', ' ', text)
+    return text.strip()
 
 MODEL_DIR = Path(__file__).parent / "fake_job_model"
 
@@ -113,14 +120,15 @@ if submitted:
 
     text_columns = config["text_columns"]
     for col in text_columns:
-        job_df[col] = job_df[col].fillna("").astype(str)
+       job_df[col] = job_df[col].fillna("").astype(str)
+       job_df[col] = job_df[col].apply(clean_text)
 
     job_df["combined_text"] = (
-        job_df["title"] + " " +
-        job_df["company_profile"] + " " +
-        job_df["description"] + " " +
-        job_df["requirements"] + " " +
-        job_df["benefits"]
+       job_df["title"] + " " +
+       job_df["company_profile"] + " " +
+       job_df["description"] + " " +
+       job_df["requirements"] + " " +
+       job_df["benefits"]
     )
 
     text_features = tfidf.transform(job_df["combined_text"])
