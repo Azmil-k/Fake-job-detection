@@ -154,7 +154,7 @@ if submitted:
    ])
 
    # Verify the input matches the trained model
-   if combined_features.shape[1] != model.n_features_in_:
+    if combined_features.shape[1] != model.n_features_in_:
        st.error(
            f"Feature mismatch: app created "
            f"{combined_features.shape[1]} features, but the model "
