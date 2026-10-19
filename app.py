@@ -147,13 +147,22 @@ if submitted:
 
     numeric_features = job_df[numeric_columns].values
 
-    combined_features = hstack([
-        text_features,
-        categorical_features,
-        numeric_features
-    ])
+combined_features = hstack([
+    text_features,
+    categorical_features,
+    numeric_features
+])
 
-    prediction = int(model.predict(combined_features)[0])
+# Verify the input matches the trained model
+if combined_features.shape[1] != model.n_features_in_:
+    st.error(
+        f"Feature mismatch: app created "
+        f"{combined_features.shape[1]} features, but the model "
+        f"expects {model.n_features_in_}."
+    )
+    st.stop()
+
+prediction = int(model.predict(combined_features)[0])
 
     st.subheader("Prediction result")
 
